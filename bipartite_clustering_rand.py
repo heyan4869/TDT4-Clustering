@@ -63,7 +63,7 @@ def k_means_docs(dev_csr_mtx, k_size):
         num_of_round += 1
         # use Dictionaries to store the docID to its nearest center
         doc_nearest_dict = {}
-        # this calculates the cosine similarity
+        # calculate the cosine similarity
         cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
         cur_sum_of_cos_dis = cos_sim_mtx.max(axis=1).sum()
 
@@ -81,7 +81,6 @@ def k_means_docs(dev_csr_mtx, k_size):
                     doc_nearest_dict[max_idx_of_row[idx]] = [idx]
 
         # update the k cluster center
-        # TODO: handle empty cluster with assigning random center? (no empty now)
         for idx_k in range(0, len(center_mtx)):
             center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
 
@@ -141,10 +140,10 @@ def k_means_words(dev_csr_mtx, k_size):
                     word_nearest_dict[max_idx_of_row[idx]] = [idx]
 
         # update the k centers
-        # TODO: handle empty cluster with assigning random center
         for idx_k in range(0, len(center_mtx)):
             center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
 
+        # check if k-means converged
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 3:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
@@ -164,6 +163,7 @@ def k_means_words(dev_csr_mtx, k_size):
 
 
 # function bipartite_cluster()
+# use bipartite algorithm to generate doc and word clusters simultaneously
 def bipartite_clustering():
 
     # step 0: get the original doc-word sparse matrix X (dev_csr_mtx)
@@ -174,10 +174,10 @@ def bipartite_clustering():
     # preparation for k-means word
     dev_csr_mtx_word = dev_csr_mtx.transpose()
 
+    # initialize parameters
     num_of_round = 0
     word_k_size = 800
-    doc_k_size = 150
-    # TODO: write good criteria to end the loop
+    doc_k_size = 200
     word_nearest_dict = {}
     doc_nearest_dict = {}
     while num_of_round < 10:
@@ -188,22 +188,26 @@ def bipartite_clustering():
         word_nearest_dict = k_means_words(dev_csr_mtx_word, word_k_size)
 
         # step 2: use word cluster on X and get X' (dev_csr_mtx_p)
-        dev_csr_mtx_p = sparse.lil_matrix((row_num, word_k_size), dtype=np.float)
+        # dev_csr_mtx_p = sparse.lil_matrix((row_num, word_k_size), dtype=np.float)
+        dev_csr_mtx_p = np.zeros((row_num, word_k_size))
         for cluster_num in word_nearest_dict:
-            dev_csr_mtx_p[:, cluster_num] = dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)
+            # dev_csr_mtx_p[:, cluster_num] = dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)
+            dev_csr_mtx_p[:, cluster_num] = np.asarray(dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)).reshape(row_num)
 
         # step 3: use k-means on rows of X' and generate doc cluster
         # TODO: test which k value is better
-        doc_nearest_dict = k_means_docs(dev_csr_mtx_p.tocsr(), doc_k_size)
+        doc_nearest_dict = k_means_docs(sparse.csr_matrix(dev_csr_mtx_p), doc_k_size)
 
         # step 4: use doc cluster on X and get X''
         # dev_csr_mtx_pp = np.zeros((doc_k_size, col_num), dtype=np.float)
-        dev_csr_mtx_pp = sparse.lil_matrix((doc_k_size, col_num), dtype=np.float)
+        # dev_csr_mtx_pp = sparse.lil_matrix((doc_k_size, col_num), dtype=np.float)
+        dev_csr_mtx_pp = np.zeros((doc_k_size, col_num))
         for cluster_num in doc_nearest_dict:
-            dev_csr_mtx_pp[cluster_num] = dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)
+            # dev_csr_mtx_pp[cluster_num] = dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)
+            dev_csr_mtx_pp[cluster_num, :] = np.asarray(dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)).reshape(col_num)
 
         # step 5: use X'' for k-means word again
-        dev_csr_mtx_word = dev_csr_mtx_pp.tocsr().transpose()
+        dev_csr_mtx_word = sparse.csr_matrix(dev_csr_mtx_pp).transpose()
 
     # finished bipartite clustering and get both doc clusters and word clusters
     print '\n' + "bipartite clustering finished." + '\n'

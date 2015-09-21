@@ -5,7 +5,7 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/bipartite_clustering_rand.py" afterPath="$PROJECT_DIR$/bipartite_clustering_rand.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/doc_cluster" afterPath="$PROJECT_DIR$/doc_cluster" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/matrix_test.py" afterPath="$PROJECT_DIR$/matrix_test.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/vcs.xml" afterPath="$PROJECT_DIR$/.idea/vcs.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="tdt4.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -22,10 +22,10 @@
     <SUITE FILE_PATH="coverage/tdt4$bipartite_clustering_test.coverage" NAME="bipartite_clustering_test Coverage Results" MODIFIED="1442858494236" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tdt4$bipartite_clustering_emp.coverage" NAME="bipartite_clustering_emp Coverage Results" MODIFIED="1442848930107" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tdt4$fileReader.coverage" NAME="fileReader Coverage Results" MODIFIED="1442633723103" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/tdt4$matrix_test.coverage" NAME="matrix_test Coverage Results" MODIFIED="1442863966019" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/tdt4$matrix_test.coverage" NAME="matrix_test Coverage Results" MODIFIED="1442866391565" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tdt4$bipartite_clustering.coverage" NAME="bipartite_clustering Coverage Results" MODIFIED="1442854094921" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/tdt4$corpus_exploration.coverage" NAME="corpus_exploration Coverage Results" MODIFIED="1442448366212" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/tdt4$bipartite_clustering_rand.coverage" NAME="bipartite_clustering_rand Coverage Results" MODIFIED="1442863788208" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/tdt4$bipartite_clustering_rand.coverage" NAME="bipartite_clustering_rand Coverage Results" MODIFIED="1442869641804" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -39,8 +39,8 @@
       <file leaf-file-name="bipartite_clustering_rand.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/bipartite_clustering_rand.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.15517241">
-              <caret line="9" column="31" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
+            <state vertical-scroll-proportion="1.6982758">
+              <caret line="229" column="34" selection-start-line="229" selection-start-column="34" selection-end-line="229" selection-end-column="34" />
               <folding>
                 <element signature="e#25#35#0" expanded="true" />
               </folding>
@@ -52,10 +52,9 @@
         <entry file="file://$PROJECT_DIR$/matrix_test.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="12" column="24" selection-start-line="10" selection-start-column="0" selection-end-line="12" selection-end-column="24" />
+              <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
               <folding>
                 <element signature="e#21#31#0" expanded="true" />
-                <marker date="1442863961000" expanded="true" signature="4431:4514" placeholder="..." />
               </folding>
             </state>
           </provider>
@@ -84,8 +83,8 @@
         <option value="$PROJECT_DIR$/bipartite_clustering_emp.py" />
         <option value="$PROJECT_DIR$/bipartite_clustering.py" />
         <option value="$PROJECT_DIR$/bipartite_clustering_test.py" />
-        <option value="$PROJECT_DIR$/bipartite_clustering_rand.py" />
         <option value="$PROJECT_DIR$/matrix_test.py" />
+        <option value="$PROJECT_DIR$/bipartite_clustering_rand.py" />
       </list>
     </option>
   </component>
@@ -177,7 +176,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.matrix_test">
+  <component name="RunManager" selected="Python.bipartite_clustering_rand">
     <configuration default="false" name="matrix_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -465,8 +464,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.matrix_test" />
-        <item index="1" class="java.lang.String" itemvalue="Python.bipartite_clustering_rand" />
+        <item index="0" class="java.lang.String" itemvalue="Python.bipartite_clustering_rand" />
+        <item index="1" class="java.lang.String" itemvalue="Python.matrix_test" />
         <item index="2" class="java.lang.String" itemvalue="Python.bipartite_clustering_test" />
         <item index="3" class="java.lang.String" itemvalue="Python.bipartite_clustering" />
         <item index="4" class="java.lang.String" itemvalue="Python.bipartite_clustering_emp" />
@@ -527,13 +526,13 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/matrix_test.py</url>
-          <line>71</line>
+          <line>77</line>
           <option name="timeStamp" value="87" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/matrix_test.py</url>
-          <line>20</line>
-          <option name="timeStamp" value="168" />
+          <line>30</line>
+          <option name="timeStamp" value="173" />
         </line-breakpoint>
       </breakpoints>
       <breakpoints-dialog>
@@ -546,7 +545,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="169" />
+      <option name="time" value="179" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -702,18 +701,17 @@
     <entry file="file://$PROJECT_DIR$/matrix_test.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="12" column="24" selection-start-line="10" selection-start-column="0" selection-end-line="12" selection-end-column="24" />
+          <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
           <folding>
             <element signature="e#21#31#0" expanded="true" />
-            <marker date="1442863961000" expanded="true" signature="4431:4514" placeholder="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/bipartite_clustering_rand.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.15517241">
-          <caret line="9" column="31" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
+        <state vertical-scroll-proportion="1.6982758">
+          <caret line="229" column="34" selection-start-line="229" selection-start-column="34" selection-end-line="229" selection-end-column="34" />
           <folding>
             <element signature="e#25#35#0" expanded="true" />
           </folding>

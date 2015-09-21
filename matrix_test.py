@@ -7,24 +7,30 @@ import random
 import scipy.sparse as sparse
 from scipy import spatial
 from numpy import linalg as la
-from operator import itemgetter
-def column(matrix,i):
-    f = itemgetter(i)
-    return map(f,matrix)
+# from operator import itemgetter
+# def column(matrix,i):
+#     f = itemgetter(i)
+#     return map(f,matrix)
+#
+# # M = [range(x,x+5) for x in range(10)]
+# # assert column(M,1) == range(1,11)
+#
+# cur = np.array([[2, 3, 4],
+#                 [4, 5, 6],
+#                 [7, 8, 9]])
+# nex = np.array(column(cur.transpose(), 1))
+# print nex
 
-M = [range(x,x+5) for x in range(10)]
-assert column(M,1) == range(1,11)
+test = np.zeros((3, 3))
 
-cur = np.array([[2, 3, 4],
-                [4, 5, 6],
-                [7, 8, 9]])
-nex = np.array(column(cur, [1, 2]))
-print nex
+row = np.array([0, 0, 1, 2, 2, 2])
+col = np.array([0, 2, 2, 0, 1, 2])
+data = np.array([1, 2, 3, 4, 5, 6])
+test_mtx = sparse.csr_matrix((data, (row, col)), shape=(3, 3))
 
-# row = np.array([0, 0, 1, 2, 2, 2])
-# col = np.array([0, 2, 2, 0, 1, 2])
-# data = np.array([1, 2, 3, 4, 5, 6])
-# test_mtx = sparse.csr_matrix((data, (row, col)), shape=(3, 3))
+test[:, 0] = [ 1, 2,3 ]
+print test
+
 # # test_mtx[0] = np.array([1,2,3])
 # # print test_mtx[0].toarray()
 #
