@@ -7,13 +7,13 @@ import scipy.sparse as sparse
 from scipy import spatial
 import random
 import time
+from operator import itemgetter
 
 
 # function file_reader(): read the dev docVectors file to get term freq
 # find out this function is unnecessary
 def file_reader(path):
     target_file = open(path)
-    # term_freq_mtx = open('HW2_data/HW2_dev.docVectors')
     return target_file
 
 
@@ -24,7 +24,6 @@ def matrix_transfer():
     # TODO: change this path to sys.argv[]
     term_freq_path = 'HW2_data/HW2_dev.docVectors'
     term_freq = open(term_freq_path, 'r')
-    # term_freq_row_num = sum(1 for line in open(term_freq_path, 'r'))
     cur_row_num = -1
     row_list = []
     col_list = []
@@ -47,14 +46,11 @@ def matrix_transfer():
 # TODO: could this function apply to different situation (done)
 def k_means_docs(dev_csr_mtx, k_size):
     # dev_csr_mtx stores the tf values of documents by words
-    # dev_csr_mtx = matrix_transfer()
     [row_num, col_num] = dev_csr_mtx.shape
 
     # TODO: change the initialization of random centers (done)
     # initialize a cluster matrix with size k
-    # center_mtx = np.random.randint(1, 100, (k_size, col_num)).astype('float')
     # choose k center randomly from the original matrix
-    # center_mtx_i = np.zeros((k_size, col_num), dtype=float)
     pick = random.sample(range(row_num), k_size)
     center_mtx = dev_csr_mtx[pick, :].toarray()
 
@@ -65,9 +61,6 @@ def k_means_docs(dev_csr_mtx, k_size):
     cur_dict_size = []
     while num_of_round < 50:
         num_of_round += 1
-        # print '\n'
-        # print "round of ", num_of_round
-        # print '\n'
         # use Dictionaries to store the docID to its nearest center
         doc_nearest_dict = {}
         # this calculates the cosine similarity
@@ -89,21 +82,8 @@ def k_means_docs(dev_csr_mtx, k_size):
 
         # update the k cluster center
         # TODO: handle empty cluster with assigning random center? (no empty now)
-        # del_row = 0
         for idx_k in range(0, len(center_mtx)):
-            # if idx_k in doc_nearest_dict:
             center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
-
-        # compare the current dict with the previous one
-        # for cluster_num in doc_nearest_dict:
-        #     cur_dict_size.append(len(doc_nearest_dict[cluster_num]))
-        # if pre_dict_size != []:
-        #     # print len(set(cur_dict_size) & set(pre_dict_size))
-        #     if len(set(cur_dict_size) & set(pre_dict_size)) > k_size * 0.95:
-        #         num_of_round = 50
-        #
-        # pre_dict_size = cur_dict_size
-        # cur_dict_size = []
 
         # TODO: change the converge condition
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
@@ -126,14 +106,10 @@ def k_means_docs(dev_csr_mtx, k_size):
 # TODO: dev_csr_mtx needs to be transposed before passing to k_means_words
 def k_means_words(dev_csr_mtx, k_size):
     # dev_csr_mtx stores the tf values of documents by words
-    # dev_csr_mtx = matrix_transfer().transpose()
     [row_num, col_num] = dev_csr_mtx.shape
 
     # initialize k random centers
-    # center_mtx = np.random.randint(1, 100, (k_size, col_num)).astype('float')
-    # choose k center averagely from the original matrix
-    # center_mtx = np.zeros((k_size, col_num), dtype=float)
-    # for idx in range(0, k_size):
+    # choose k center randomly from the original matrix
     pick = random.sample(range(row_num), k_size)
     center_mtx = dev_csr_mtx[pick, :].toarray()
 
@@ -144,24 +120,14 @@ def k_means_words(dev_csr_mtx, k_size):
     cur_dict_size = []
     while num_of_round < 50:
         num_of_round += 1
-        # print '\n'
-        # print "round of ", num_of_round
-        # print '\n'
-
         # use Dictionaries to store the wordID to its nearest center
         word_nearest_dict = {}
-        # TODO: previous is dev_csr_mtx.toarray() (done)
         # print ("---------%s seconds---------" % (time.time()-start_time))
         cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
         cur_sum_of_cos_dis = cos_sim_mtx.max(axis=1).sum()
 
         # find the closest center
         max_idx_of_row = cos_sim_mtx.argmax(axis=1)
-        # for idx in range(0, len(max_idx_of_row)):
-        #     if max_idx_of_row[idx] in word_nearest_dict:
-        #         word_nearest_dict[max_idx_of_row[idx]].append(idx)
-        #     else:
-        #         word_nearest_dict[max_idx_of_row[idx]] = [idx]
         for idx in range(0, len(max_idx_of_row)):
             if idx in pick:
                 if pick.index(idx) in word_nearest_dict:
@@ -176,13 +142,7 @@ def k_means_words(dev_csr_mtx, k_size):
 
         # update the k centers
         # TODO: handle empty cluster with assigning random center
-        del_row = 0
         for idx_k in range(0, len(center_mtx)):
-            # if idx_k in word_nearest_dict:
-            #     center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
-            # else:
-            #     pick = random.sample(range(row_num), k_size / 20)
-            #     center_mtx[idx_k] = dev_csr_mtx[pick, :].mean(axis=0)
             center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
 
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 3:
@@ -225,21 +185,16 @@ def bipartite_clustering():
 
         # step 1: k-means on columns of X and generate word cluster
         # TODO: test which k value is better
-        # word_k_size = 800
         word_nearest_dict = k_means_words(dev_csr_mtx_word, word_k_size)
-        # word_k_size = len(word_nearest_dict)
 
         # step 2: use word cluster on X and get X' (dev_csr_mtx_p)
-        # dev_csr_mtx_p = np.zeros((row_num, word_k_size), dtype=np.float)
         dev_csr_mtx_p = sparse.lil_matrix((row_num, word_k_size), dtype=np.float)
         for cluster_num in word_nearest_dict:
             dev_csr_mtx_p[:, cluster_num] = dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)
 
         # step 3: use k-means on rows of X' and generate doc cluster
         # TODO: test which k value is better
-        # doc_k_size = 200
         doc_nearest_dict = k_means_docs(dev_csr_mtx_p.tocsr(), doc_k_size)
-        # doc_k_size = len(doc_nearest_dict)
 
         # step 4: use doc cluster on X and get X''
         # dev_csr_mtx_pp = np.zeros((doc_k_size, col_num), dtype=np.float)

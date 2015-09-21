@@ -7,6 +7,19 @@ import random
 import scipy.sparse as sparse
 from scipy import spatial
 from numpy import linalg as la
+from operator import itemgetter
+def column(matrix,i):
+    f = itemgetter(i)
+    return map(f,matrix)
+
+M = [range(x,x+5) for x in range(10)]
+assert column(M,1) == range(1,11)
+
+cur = np.array([[2, 3, 4],
+                [4, 5, 6],
+                [7, 8, 9]])
+nex = np.array(column(cur, [1, 2]))
+print nex
 
 # row = np.array([0, 0, 1, 2, 2, 2])
 # col = np.array([0, 2, 2, 0, 1, 2])
@@ -173,11 +186,11 @@ from numpy import linalg as la
 # res = temp/t.T
 # print res
 
-a = []
-b = [2, 3, 4]
-# print len(set(a) & set(b))
-if a == []:
-    print "t"
+# a = []
+# b = [2, 3, 4]
+# # print len(set(a) & set(b))
+# if a == []:
+#     print "t"
 
 # if pre_doc_nearest_dict == {}:
 #             continue
