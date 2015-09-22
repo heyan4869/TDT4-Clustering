@@ -87,6 +87,7 @@ def k_means_docs(dev_csr_mtx, k_size):
         cur_sum_of_cos_dis = cos_sim_mtx.max(axis=1).sum()
 
         max_idx_of_row = cos_sim_mtx.argmax(axis=1)
+        max_sim_of_row = cos_sim_mtx.max(axis=1).astype('float')
         for idx in range(0, len(max_idx_of_row)):
             if idx in pick:
                 if pick.index(idx) in doc_nearest_dict:
@@ -99,20 +100,26 @@ def k_means_docs(dev_csr_mtx, k_size):
                 else:
                     doc_nearest_dict[max_idx_of_row[idx]] = [idx]
 
-        # update the k cluster center
-        for idx_k in range(0, len(center_mtx)):
-            center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
+        # update the k cluster center with weighted term
+        for idx_k in range(0, len(doc_nearest_dict)):
+            if len(doc_nearest_dict[idx_k]) == 1:
+                center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].toarray()
+            else:
+                list_of_sim = map(max_sim_of_row.__getitem__, doc_nearest_dict[idx_k])
+                weight = np.asmatrix(np.divide(list_of_sim, sum(list_of_sim))).transpose()
+                multi = np.multiply(dev_csr_mtx[doc_nearest_dict[idx_k], :].toarray(), weight)
+                center_mtx[idx_k] = np.asarray(multi.sum(axis=0)).reshape(col_num)
 
         # TODO: change the converge condition
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -146,6 +153,7 @@ def k_means_words(dev_csr_mtx, k_size):
 
         # find the closest center
         max_idx_of_row = cos_sim_mtx.argmax(axis=1)
+        max_sim_of_row = cos_sim_mtx.max(axis=1).astype('float')
         for idx in range(0, len(max_idx_of_row)):
             if idx in pick:
                 if pick.index(idx) in word_nearest_dict:
@@ -159,19 +167,28 @@ def k_means_words(dev_csr_mtx, k_size):
                     word_nearest_dict[max_idx_of_row[idx]] = [idx]
 
         # update the k centers
-        for idx_k in range(0, len(center_mtx)):
-            center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
+        # for idx_k in range(0, len(center_mtx)):
+        #     center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
+
+        for idx_k in range(0, len(word_nearest_dict)):
+            if len(word_nearest_dict[idx_k]) == 1:
+                center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].toarray()
+            else:
+                list_of_sim = map(max_sim_of_row.__getitem__, word_nearest_dict[idx_k])
+                weight = np.asmatrix(np.divide(list_of_sim, sum(list_of_sim))).transpose()
+                multi = np.multiply(dev_csr_mtx[word_nearest_dict[idx_k], :].toarray(), weight)
+                center_mtx[idx_k] = np.asarray(multi.sum(axis=0)).reshape(col_num)
 
         # check if k-means converged
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm

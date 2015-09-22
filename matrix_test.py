@@ -206,36 +206,62 @@ from numpy import linalg as la
 #             num_of_same = 0
 #             for cluster_num in doc_nearest_dict:
 #                 num_of_same += len(set(doc_nearest_dict[cluster_num]).intersection(pre_doc_nearest_dict[cluster_num]))
-def tf_matrix_transfer():
-    # TODO: change this path to sys.argv[]
-    term_freq_path = 'HW2_data/HW2_dev.docVectors'
-    term_freq = open(term_freq_path, 'r')
-    cur_row_num = -1
-    row_list = []
-    col_list = []
-    data_list = []
-    for line in term_freq:
-        cur_row_num += 1
-        term_tf_pair = line.split()
-        for pair in term_tf_pair:
-            ele = pair.split(':')
-            row_list.append(cur_row_num)
-            col_list.append(int(ele[0]))
-            data_list.append(int(ele[1]))
-    coo_sparse_mtx = sparse.coo_matrix((data_list, (row_list, col_list)), dtype=np.float)
-    dev_csr_mtx = coo_sparse_mtx.tocsr()
-    return dev_csr_mtx
+# def tf_matrix_transfer():
+#     # TODO: change this path to sys.argv[]
+#     term_freq_path = 'HW2_data/HW2_dev.docVectors'
+#     term_freq = open(term_freq_path, 'r')
+#     cur_row_num = -1
+#     row_list = []
+#     col_list = []
+#     data_list = []
+#     for line in term_freq:
+#         cur_row_num += 1
+#         term_tf_pair = line.split()
+#         for pair in term_tf_pair:
+#             ele = pair.split(':')
+#             row_list.append(cur_row_num)
+#             col_list.append(int(ele[0]))
+#             data_list.append(int(ele[1]))
+#     coo_sparse_mtx = sparse.coo_matrix((data_list, (row_list, col_list)), dtype=np.float)
+#     dev_csr_mtx = coo_sparse_mtx.tocsr()
+#     return dev_csr_mtx
+#
+# df = open('HW2_data/HW2_dev.df', 'r')
+# df_list = []
+# for line in df:
+#     term_df_pair = line.split(':')
+#     df_list.append(int(term_df_pair[1]))
+#
+# idf = np.log(np.divide(942.0, map(float, df_list)))
+#
+# tf_mtx = tf_matrix_transfer()
+#
+# tf_idf = np.multiply(tf_mtx.toarray(), idf)
+# print tf_idf.shape
 
-df = open('HW2_data/HW2_dev.df', 'r')
-df_list = []
-for line in df:
-    term_df_pair = line.split(':')
-    df_list.append(int(term_df_pair[1]))
 
-idf = np.log(np.divide(942.0, map(float, df_list)))
+# dict = {}
+#
+# dict[0] = [1, 2]
+# dict[1] = [3]
+# dict[2] = [2, 3]
+# print len(dict[0])
+#
+# cosine = np.asmatrix([[1, 2, 3], [2, 4, 1], [3, 3, 5]])
+# max_idx = cosine.argmax(axis=1)
+# max_sim = cosine.max(axis=1)
+# print max_idx
+#
+# for idx in dict:
+#     doc_idx = dict[idx]
+#     temp = max_idx[doc_idx, :]
+#     print temp
 
-tf_mtx = tf_matrix_transfer()
+# a = np.asmatrix([[1, 2, 3], [4, 5, 6]])
+# b = np.asmatrix([[0.1], [0.2]])
+# print np.multiply(a, b).sum(axis=0) / 2
+# print a.sum(0)/2
 
-tf_idf = np.multiply(tf_mtx.toarray(), idf)
-print tf_idf.shape
-
+a = np.asarray([1, 2, 3])
+b = np.asarray([[1, 2], [3, 4], [5, 6]])
+print np.multiply(b, np.asmatrix(a).transpose())
