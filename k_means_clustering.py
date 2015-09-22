@@ -7,50 +7,6 @@ import scipy.sparse as sparse
 from scipy import spatial
 
 
-# function file_reader(): read the dev docVectors file to get term freq
-# find out this function is unnecessary
-# def file_reader(path):
-#     target_file = open(path)
-#     # term_freq = open('HW2_data/HW2_dev.docVectors')
-#     # dict = open('HW2_data/HW2_dev.dict')
-#     return target_file
-
-
-# term_freq: wordIndex1:frequency, wordIndex2:frequency, ..., wordIndexFinal:frequency
-# function matrix_transfer_pre(): transfer the docVectors to a sparse matrix
-# function is relatively slow, needs to be refined
-def matrix_transfer_pre():
-    term_freq_path = 'HW2_data/HW2_dev.docVectors'
-    dict_path = 'HW2_data/HW2_dev.dict'
-    term_freq = open(term_freq_path, 'r')
-    # dict = open(dict_path, 'r')
-    term_freq_row_num = sum(1 for line in open(term_freq_path, 'r'))
-    dict_row_num = sum(1 for line in open(dict_path, 'r'))
-
-    # print term_freq_row_num
-    # print '\n'
-    # print dict_row_num
-
-    # use uint16 data type to save memory space
-    sparse_mtx = sparse.lil_matrix((term_freq_row_num, dict_row_num), dtype=np.uint16)
-    cur_row_num = -1
-    for line in term_freq:
-        cur_row_num += 1
-        # print line
-        term_tf = line.split()
-        # print term_tf.__len__()
-        for pair in term_tf:
-            ele = pair.split(':')
-            # update the values in sparse_mtx
-            sparse_mtx[cur_row_num, int(ele[0])] = int(ele[1])
-
-    print '\n' + "sparse matrix transfer finished."
-    print '\n'
-    # transfer the generated lil_matrix to the form of csr_matrix
-    dev_csr_mtx = sparse_mtx.tocsr()
-    return dev_csr_mtx
-
-
 # function matrix_transfer(): transfer the docVectors to a sparse matrix
 # improve the efficiency compare to function matrix_transfer_pre()
 # term_freq: wordIndex1:frequency, wordIndex2:frequency, ..., wordIndexFinal:frequency

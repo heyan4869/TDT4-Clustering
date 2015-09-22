@@ -1,11 +1,10 @@
-######################################################################
+#################################################################################
 #
-# __author__ = 'yanhe'
-# custom algorithm:
-# 1. improved by using the tf-idf matrix
+#     __author__ = 'yanhe'
 #
-######################################################################
-
+#     custom algorithm: measure similarity by calculating euclidean distance
+#
+#################################################################################
 
 
 import sys
@@ -73,7 +72,7 @@ def k_means_docs(dev_csr_mtx, k_size):
     center_mtx = dev_csr_mtx[pick, :].toarray()
 
     num_of_round = 0
-    max_sum_cos_dis = 1 - sys.maxint
+    max_sum_cos_dis = sys.maxint
     doc_nearest_dict = {}
     pre_dict_size = []
     cur_dict_size = []
@@ -81,11 +80,14 @@ def k_means_docs(dev_csr_mtx, k_size):
         num_of_round += 1
         # use Dictionaries to store the docID to its nearest center
         doc_nearest_dict = {}
-        # calculate the cosine similarity
-        cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
-        cur_sum_of_cos_dis = cos_sim_mtx.max(axis=1).sum()
 
-        max_idx_of_row = cos_sim_mtx.argmax(axis=1)
+        # TODO: changed to euclidean
+        # calculate the cosine similarity
+        # cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
+        cos_sim_mtx = spatial.distance.cdist(dev_csr_mtx.toarray(), center_mtx, 'euclidean')
+        cur_sum_of_cos_dis = cos_sim_mtx.min(axis=1).sum()
+
+        max_idx_of_row = cos_sim_mtx.argmin(axis=1)
         for idx in range(0, len(max_idx_of_row)):
             if idx in pick:
                 if pick.index(idx) in doc_nearest_dict:
@@ -103,15 +105,15 @@ def k_means_docs(dev_csr_mtx, k_size):
             center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
 
         # TODO: change the converge condition
-        if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
+        if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
-            if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
+            if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -131,7 +133,7 @@ def k_means_words(dev_csr_mtx, k_size):
     center_mtx = dev_csr_mtx[pick, :].toarray()
 
     num_of_round = 0
-    max_sum_cos_dis = 0 - sys.maxint
+    max_sum_cos_dis = sys.maxint
     word_nearest_dict = {}
     pre_dict_size = []
     cur_dict_size = []
@@ -140,11 +142,14 @@ def k_means_words(dev_csr_mtx, k_size):
         # use Dictionaries to store the wordID to its nearest center
         word_nearest_dict = {}
         # print ("---------%s seconds---------" % (time.time()-start_time))
-        cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
-        cur_sum_of_cos_dis = cos_sim_mtx.max(axis=1).sum()
+
+        # TODO: changed to euclidean
+        # cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
+        cos_sim_mtx = spatial.distance.cdist(dev_csr_mtx.toarray(), center_mtx, 'euclidean')
+        cur_sum_of_cos_dis = cos_sim_mtx.min(axis=1).sum()
 
         # find the closest center
-        max_idx_of_row = cos_sim_mtx.argmax(axis=1)
+        max_idx_of_row = cos_sim_mtx.argmin(axis=1)
         for idx in range(0, len(max_idx_of_row)):
             if idx in pick:
                 if pick.index(idx) in word_nearest_dict:
@@ -162,15 +167,15 @@ def k_means_words(dev_csr_mtx, k_size):
             center_mtx[idx_k] = dev_csr_mtx[word_nearest_dict[idx_k], :].mean(axis=0)
 
         # check if k-means converged
-        if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
+        if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
-            if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
+            if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -201,7 +206,8 @@ def bipartite_clustering():
     doc_k_size = 200
     word_dict = {}
     doc_dict = {}
-    while num_of_round < 20:
+    # TODO: change to 20 rounds
+    while num_of_round < 10:
         num_of_round += 1
 
         # step 1: k-means on columns of X and generate word cluster
