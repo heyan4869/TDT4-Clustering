@@ -2,7 +2,8 @@
 #
 #     __author__ = 'yanhe'
 #
-#     custom algorithm: improved accuracy by using the tf-idf matrix
+#     custom algorithm:
+#        1. improved accuracy by using the tf-idf matrix
 #
 #################################################################################
 
@@ -72,7 +73,7 @@ def k_means_docs(dev_csr_mtx, k_size):
     center_mtx = dev_csr_mtx[pick, :].toarray()
 
     num_of_round = 0
-    max_sum_cos_dis = 1 - sys.maxint
+    max_sum_cos_dis = 0 - sys.maxint
     doc_nearest_dict = {}
     pre_dict_size = []
     cur_dict_size = []
