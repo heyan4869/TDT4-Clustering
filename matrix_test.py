@@ -7,6 +7,8 @@ import random
 import scipy.sparse as sparse
 from scipy import spatial
 from numpy import linalg as la
+
+
 # from operator import itemgetter
 # def column(matrix,i):
 #     f = itemgetter(i)
@@ -21,15 +23,15 @@ from numpy import linalg as la
 # nex = np.array(column(cur.transpose(), 1))
 # print nex
 
-test = np.zeros((3, 3))
-
-row = np.array([0, 0, 1, 2, 2, 2])
-col = np.array([0, 2, 2, 0, 1, 2])
-data = np.array([1, 2, 3, 4, 5, 6])
-test_mtx = sparse.csr_matrix((data, (row, col)), shape=(3, 3))
-
-test[:, 0] = [ 1, 2,3 ]
-print test
+# test = np.zeros((3, 3))
+#
+# row = np.array([0, 0, 1, 2, 2, 2])
+# col = np.array([0, 2, 2, 0, 1, 2])
+# data = np.array([1, 2, 3, 4, 5, 6])
+# test_mtx = sparse.csr_matrix((data, (row, col)), shape=(3, 3))
+#
+# test[:, 0] = [ 1, 2,3 ]
+# print test
 
 # # test_mtx[0] = np.array([1,2,3])
 # # print test_mtx[0].toarray()
@@ -204,5 +206,36 @@ print test
 #             num_of_same = 0
 #             for cluster_num in doc_nearest_dict:
 #                 num_of_same += len(set(doc_nearest_dict[cluster_num]).intersection(pre_doc_nearest_dict[cluster_num]))
+def tf_matrix_transfer():
+    # TODO: change this path to sys.argv[]
+    term_freq_path = 'HW2_data/HW2_dev.docVectors'
+    term_freq = open(term_freq_path, 'r')
+    cur_row_num = -1
+    row_list = []
+    col_list = []
+    data_list = []
+    for line in term_freq:
+        cur_row_num += 1
+        term_tf_pair = line.split()
+        for pair in term_tf_pair:
+            ele = pair.split(':')
+            row_list.append(cur_row_num)
+            col_list.append(int(ele[0]))
+            data_list.append(int(ele[1]))
+    coo_sparse_mtx = sparse.coo_matrix((data_list, (row_list, col_list)), dtype=np.float)
+    dev_csr_mtx = coo_sparse_mtx.tocsr()
+    return dev_csr_mtx
 
+df = open('HW2_data/HW2_dev.df', 'r')
+df_list = []
+for line in df:
+    term_df_pair = line.split(':')
+    df_list.append(int(term_df_pair[1]))
+
+idf = np.log(np.divide(942.0, map(float, df_list)))
+
+tf_mtx = tf_matrix_transfer()
+
+tf_idf = np.multiply(tf_mtx.toarray(), idf)
+print tf_idf.shape
 

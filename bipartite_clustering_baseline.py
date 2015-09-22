@@ -39,6 +39,7 @@ def matrix_transfer():
     coo_sparse_mtx = sparse.coo_matrix((data_list, (row_list, col_list)), dtype=np.float)
     print '\n' + "sparse matrix transfer finished." + '\n'
     dev_csr_mtx = coo_sparse_mtx.tocsr()
+    # TODO: consider to use dense matrix
     return dev_csr_mtx
 
 
@@ -167,47 +168,47 @@ def k_means_words(dev_csr_mtx, k_size):
 def bipartite_clustering():
 
     # step 0: get the original doc-word sparse matrix X (dev_csr_mtx)
-    dev_csr_mtx = matrix_transfer()
+    dev_mtx = matrix_transfer()
     # start_time = time.time()
-    [row_num, col_num] = dev_csr_mtx.shape
+    [row_num, col_num] = dev_mtx.shape
 
     # preparation for k-means word
-    dev_csr_mtx_word = dev_csr_mtx.transpose()
+    dev_mtx_word = dev_mtx.transpose()
 
     # initialize parameters
     num_of_round = 0
-    word_k_size = 800
+    word_k_size = 700
     doc_k_size = 200
-    word_nearest_dict = {}
-    doc_nearest_dict = {}
-    while num_of_round < 10:
+    word_dict = {}
+    doc_dict = {}
+    while num_of_round < 20:
         num_of_round += 1
 
         # step 1: k-means on columns of X and generate word cluster
         # TODO: test which k value is better
-        word_nearest_dict = k_means_words(dev_csr_mtx_word, word_k_size)
+        word_dict = k_means_words(dev_mtx_word, word_k_size)
 
         # step 2: use word cluster on X and get X' (dev_csr_mtx_p)
         # dev_csr_mtx_p = sparse.lil_matrix((row_num, word_k_size), dtype=np.float)
-        dev_csr_mtx_p = np.zeros((row_num, word_k_size))
-        for cluster_num in word_nearest_dict:
+        dev_mtx_p = np.zeros((row_num, word_k_size))
+        for cluster_num in word_dict:
             # dev_csr_mtx_p[:, cluster_num] = dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)
-            dev_csr_mtx_p[:, cluster_num] = np.asarray(dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)).reshape(row_num)
+            dev_mtx_p[:, cluster_num] = np.asarray(dev_mtx[:, word_dict.get(cluster_num)].mean(axis=1)).reshape(row_num)
 
         # step 3: use k-means on rows of X' and generate doc cluster
         # TODO: test which k value is better
-        doc_nearest_dict = k_means_docs(sparse.csr_matrix(dev_csr_mtx_p), doc_k_size)
+        doc_dict = k_means_docs(sparse.csr_matrix(dev_mtx_p), doc_k_size)
 
         # step 4: use doc cluster on X and get X''
         # dev_csr_mtx_pp = np.zeros((doc_k_size, col_num), dtype=np.float)
         # dev_csr_mtx_pp = sparse.lil_matrix((doc_k_size, col_num), dtype=np.float)
-        dev_csr_mtx_pp = np.zeros((doc_k_size, col_num))
-        for cluster_num in doc_nearest_dict:
+        dev_mtx_pp = np.zeros((doc_k_size, col_num))
+        for cluster_num in doc_dict:
             # dev_csr_mtx_pp[cluster_num] = dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)
-            dev_csr_mtx_pp[cluster_num, :] = np.asarray(dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)).reshape(col_num)
+            dev_mtx_pp[cluster_num, :] = np.asarray(dev_mtx[doc_dict.get(cluster_num), :].mean(axis=0)).reshape(col_num)
 
         # step 5: use X'' for k-means word again
-        dev_csr_mtx_word = sparse.csr_matrix(dev_csr_mtx_pp).transpose()
+        dev_mtx_word = sparse.csr_matrix(dev_mtx_pp).transpose()
 
     # finished bipartite clustering and get both doc clusters and word clusters
     print '\n' + "bipartite clustering finished." + '\n'
@@ -215,8 +216,8 @@ def bipartite_clustering():
     # write the doc and cluster id into test file
     f = open('doc_cluster', 'w')
     for idx in range(0, row_num):
-        for key in doc_nearest_dict:
-            if idx in doc_nearest_dict.get(key):
+        for key in doc_dict:
+            if idx in doc_dict.get(key):
                 f.write(str(idx) + " " + str(key) + '\n')
                 break
 
