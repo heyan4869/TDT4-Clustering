@@ -216,7 +216,7 @@ def bipartite_clustering():
     # initialize parameters
     num_of_round = 0
     word_k_size = 800
-    doc_k_size = 200
+    doc_k_size = 150
     word_dict = {}
     doc_dict = {}
     while num_of_round < 20:
