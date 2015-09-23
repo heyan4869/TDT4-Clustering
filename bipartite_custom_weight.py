@@ -180,13 +180,13 @@ def k_means_words(dev_csr_mtx, k_size):
                 center_mtx[idx_k] = np.asarray(multi.sum(axis=0)).reshape(col_num)
 
         # check if k-means converged
-        if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
+        if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 3:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
             print max_sum_cos_dis
         else:
             # if already converge, break the loop
-            if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
+            if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 3:
                 max_sum_cos_dis = cur_sum_of_cos_dis
                 print max_sum_cos_dis
                 break
@@ -216,7 +216,7 @@ def bipartite_clustering():
     # initialize parameters
     num_of_round = 0
     word_k_size = 800
-    doc_k_size = 150
+    doc_k_size = 200
     word_dict = {}
     doc_dict = {}
     while num_of_round < 20:

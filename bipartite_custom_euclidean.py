@@ -107,13 +107,13 @@ def k_means_docs(dev_csr_mtx, k_size):
             center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
 
         # TODO: change the converge condition
-        if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 1:
+        if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 0.5:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
             print max_sum_cos_dis
         else:
             # if already converge, break the loop
-            if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 1:
+            if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 0.5:
                 max_sum_cos_dis = cur_sum_of_cos_dis
                 print max_sum_cos_dis
                 break

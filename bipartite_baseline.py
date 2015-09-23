@@ -89,12 +89,12 @@ def k_means_docs(dev_csr_mtx, k_size):
         if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -149,13 +149,13 @@ def k_means_words(dev_csr_mtx, k_size):
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
             # print '\n'
-            # print max_sum_cos_dis
+            print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis > max_sum_cos_dis and cur_sum_of_cos_dis - max_sum_cos_dis <= 3:
                 max_sum_cos_dis = cur_sum_of_cos_dis
                 # print '\n'
-                # print max_sum_cos_dis
+                print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -177,7 +177,7 @@ def bipartite_clustering():
 
     # initialize parameters
     num_of_round = 0
-    word_k_size = 700
+    word_k_size = 800
     doc_k_size = 200
     word_dict = {}
     doc_dict = {}
