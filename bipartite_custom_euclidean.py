@@ -1,10 +1,10 @@
 #################################################################################
 #
-#     __author__ = 'yanhe'
+# __author__ = 'yanhe'
 #
-#     custom algorithm:
-#        1. improve accuracy by using the tf-idf weighting scheme
-#        2. measure similarity by calculating euclidean distance
+# custom algorithm:
+#     1. improve accuracy by using the tf-idf weighting scheme
+#     2. measure similarity by calculating euclidean distance
 #
 #################################################################################
 
@@ -18,9 +18,13 @@ import time
 from operator import itemgetter
 
 
+#################################################################################
+#
 # function matrix_transfer(): transfer the docVectors to a sparse matrix
 # improve the efficiency compare to function matrix_transfer_pre()
 # term_freq: wordIndex1:frequency, wordIndex2:frequency, ..., wordIndexFinal:frequency
+#
+#################################################################################
 def tf_matrix_transfer():
     term_freq_path = 'HW2_data/HW2_dev.docVectors'
     term_freq = open(term_freq_path, 'r')
@@ -42,7 +46,11 @@ def tf_matrix_transfer():
     return dev_csr_mtx
 
 
-# generate the df matrix
+#################################################################################
+#
+# function df_matrix_transfer(): generate the df matrix
+#
+#################################################################################
 def df_matrix_transfer():
     df = open('HW2_data/HW2_dev.df', 'r')
     df_list = []
@@ -52,13 +60,15 @@ def df_matrix_transfer():
     return df_list
 
 
-# run k-means algorithm on the matrix to cluster docs
-# TODO: could this function apply to different situation (done)
+#################################################################################
+#
+# function k_means_docs(): run k-means algorithm on the matrix to cluster docs
+#
+#################################################################################
 def k_means_docs(dev_csr_mtx, k_size):
     # dev_csr_mtx stores the tf values of documents by words
     [row_num, col_num] = dev_csr_mtx.shape
 
-    # TODO: change the initialization of random centers (done)
     # initialize a cluster matrix with size k
     # choose k center randomly from the original matrix
     pick = random.sample(range(row_num), k_size)
@@ -93,7 +103,6 @@ def k_means_docs(dev_csr_mtx, k_size):
         for idx_k in range(0, len(center_mtx)):
             center_mtx[idx_k] = dev_csr_mtx[doc_nearest_dict[idx_k], :].mean(axis=0)
 
-        # TODO: change the converge condition
         if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 0.5:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
@@ -110,8 +119,11 @@ def k_means_docs(dev_csr_mtx, k_size):
     return doc_nearest_dict
 
 
-# run k-means on the matrix to cluster words
-# TODO: dev_csr_mtx needs to be transposed before passing to k_means_words
+#################################################################################
+#
+# function k_means_words(): run k-means on the matrix to cluster words
+#
+#################################################################################
 def k_means_words(dev_csr_mtx, k_size):
     # dev_csr_mtx stores the tf values of documents by words
     [row_num, col_num] = dev_csr_mtx.shape
@@ -166,8 +178,12 @@ def k_means_words(dev_csr_mtx, k_size):
     return word_nearest_dict
 
 
-# function bipartite_cluster()
+#################################################################################
+#
+# function bipartite_cluster():
 # use bipartite algorithm to generate doc and word clusters simultaneously
+#
+#################################################################################
 def bipartite_clustering():
 
     # step 0: get the original doc-word sparse matrix X (dev_csr_mtx)
@@ -189,12 +205,10 @@ def bipartite_clustering():
     doc_k_size = 200
     word_dict = {}
     doc_dict = {}
-    # TODO: change to 20 rounds
     while num_of_round < 10:
         num_of_round += 1
 
         # step 1: k-means on columns of X and generate word cluster
-        # TODO: test which k value is better
         word_dict = k_means_words(dev_mtx_word, word_k_size)
 
         # step 2: use word cluster on X and get X' (dev_csr_mtx_p)
@@ -203,7 +217,6 @@ def bipartite_clustering():
             dev_mtx_p[:, cluster_num] = np.asarray(tf_mtx[:, word_dict.get(cluster_num)].mean(axis=1)).reshape(row_num)
 
         # step 3: use k-means on rows of X' and generate doc cluster
-        # TODO: test which k value is better
         doc_dict = k_means_docs(sparse.csr_matrix(dev_mtx_p), doc_k_size)
 
         # step 4: use doc cluster on X and get X''
@@ -230,6 +243,11 @@ def bipartite_clustering():
     print '\n' + "doc cluster file writen finished." + '\n'
 
 
+#################################################################################
+#
+# function cos_sim(): calculate the cosine similarity between two matrix
+#
+#################################################################################
 def cos_sim(dev_mtx, center_mtx):
     # numpy norm function on the cmu server currently not support the argument "axis"
     # outer_prod = np.outer(la.norm(center_mtx, axis=1), la.norm(dev_mtx, axis=1))
@@ -240,8 +258,11 @@ def cos_sim(dev_mtx, center_mtx):
     return dot_prod / outer_prod.T
 
 
+#################################################################################
+#
 # function main(): main function of the program
-# TODO: notify this function
+#
+#################################################################################
 def main():
     # print '\n' + "start to reading the docVectors data." + '\n'
     bipartite_clustering()
