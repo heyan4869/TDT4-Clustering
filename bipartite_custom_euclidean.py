@@ -3,7 +3,7 @@
 #     __author__ = 'yanhe'
 #
 #     custom algorithm:
-#        1. improved accuracy by using the tf-idf matrix
+#        1. improve accuracy by using the tf-idf weighting scheme
 #        2. measure similarity by calculating euclidean distance
 #
 #################################################################################
@@ -18,18 +18,10 @@ import time
 from operator import itemgetter
 
 
-# function file_reader(): read the dev docVectors file to get term freq
-# find out this function is unnecessary
-def file_reader(path):
-    target_file = open(path)
-    return target_file
-
-
 # function matrix_transfer(): transfer the docVectors to a sparse matrix
 # improve the efficiency compare to function matrix_transfer_pre()
 # term_freq: wordIndex1:frequency, wordIndex2:frequency, ..., wordIndexFinal:frequency
 def tf_matrix_transfer():
-    # TODO: change this path to sys.argv[]
     term_freq_path = 'HW2_data/HW2_dev.docVectors'
     term_freq = open(term_freq_path, 'r')
     cur_row_num = -1
@@ -52,7 +44,6 @@ def tf_matrix_transfer():
 
 # generate the df matrix
 def df_matrix_transfer():
-    # TODO: change this path to sys.argv[]
     df = open('HW2_data/HW2_dev.df', 'r')
     df_list = []
     for line in df:
@@ -76,16 +67,12 @@ def k_means_docs(dev_csr_mtx, k_size):
     num_of_round = 0
     max_sum_cos_dis = sys.maxint
     doc_nearest_dict = {}
-    pre_dict_size = []
-    cur_dict_size = []
     while num_of_round < 50:
         num_of_round += 1
         # use Dictionaries to store the docID to its nearest center
         doc_nearest_dict = {}
 
-        # TODO: changed to euclidean
-        # calculate the cosine similarity
-        # cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
+        # calculate the euclidean similarity
         cos_sim_mtx = spatial.distance.cdist(dev_csr_mtx.toarray(), center_mtx, 'euclidean')
         cur_sum_of_cos_dis = cos_sim_mtx.min(axis=1).sum()
 
@@ -110,12 +97,12 @@ def k_means_docs(dev_csr_mtx, k_size):
         if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 0.5:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            print max_sum_cos_dis
+            # print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 0.5:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                print max_sum_cos_dis
+                # print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -133,20 +120,14 @@ def k_means_words(dev_csr_mtx, k_size):
     # choose k center randomly from the original matrix
     pick = random.sample(range(row_num), k_size)
     center_mtx = dev_csr_mtx[pick, :].toarray()
-
     num_of_round = 0
     max_sum_cos_dis = sys.maxint
     word_nearest_dict = {}
-    pre_dict_size = []
-    cur_dict_size = []
     while num_of_round < 50:
         num_of_round += 1
         # use Dictionaries to store the wordID to its nearest center
         word_nearest_dict = {}
-        # print ("---------%s seconds---------" % (time.time()-start_time))
 
-        # TODO: changed to euclidean
-        # cos_sim_mtx = cos_sim(dev_csr_mtx.toarray(), center_mtx)
         cos_sim_mtx = spatial.distance.cdist(dev_csr_mtx.toarray(), center_mtx, 'euclidean')
         cur_sum_of_cos_dis = cos_sim_mtx.min(axis=1).sum()
 
@@ -172,12 +153,12 @@ def k_means_words(dev_csr_mtx, k_size):
         if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis > 1:
             # if more similar, update and continue
             max_sum_cos_dis = cur_sum_of_cos_dis
-            print max_sum_cos_dis
+            # print max_sum_cos_dis
         else:
             # if already converge, break the loop
             if cur_sum_of_cos_dis < max_sum_cos_dis and max_sum_cos_dis - cur_sum_of_cos_dis <= 1:
                 max_sum_cos_dis = cur_sum_of_cos_dis
-                print max_sum_cos_dis
+                # print max_sum_cos_dis
                 break
 
     # finished the k-means algorithm
@@ -217,10 +198,8 @@ def bipartite_clustering():
         word_dict = k_means_words(dev_mtx_word, word_k_size)
 
         # step 2: use word cluster on X and get X' (dev_csr_mtx_p)
-        # dev_csr_mtx_p = sparse.lil_matrix((row_num, word_k_size), dtype=np.float)
         dev_mtx_p = np.zeros((row_num, word_k_size))
         for cluster_num in word_dict:
-            # dev_csr_mtx_p[:, cluster_num] = dev_csr_mtx[:, word_nearest_dict.get(cluster_num)].mean(axis=1)
             dev_mtx_p[:, cluster_num] = np.asarray(tf_mtx[:, word_dict.get(cluster_num)].mean(axis=1)).reshape(row_num)
 
         # step 3: use k-means on rows of X' and generate doc cluster
@@ -228,8 +207,6 @@ def bipartite_clustering():
         doc_dict = k_means_docs(sparse.csr_matrix(dev_mtx_p), doc_k_size)
 
         # step 4: use doc cluster on X and get X''
-        # dev_csr_mtx_pp = np.zeros((doc_k_size, col_num), dtype=np.float)
-        # dev_csr_mtx_pp = sparse.lil_matrix((doc_k_size, col_num), dtype=np.float)
         dev_mtx_pp = np.zeros((doc_k_size, col_num))
         for cluster_num in doc_dict:
             # dev_csr_mtx_pp[cluster_num] = dev_csr_mtx[doc_nearest_dict.get(cluster_num), :].mean(axis=0)
@@ -254,7 +231,11 @@ def bipartite_clustering():
 
 
 def cos_sim(dev_mtx, center_mtx):
-    outer_prod = np.outer(np.linalg.norm(center_mtx, axis=1), np.linalg.norm(dev_mtx, axis=1))
+    # numpy norm function on the cmu server currently not support the argument "axis"
+    # outer_prod = np.outer(la.norm(center_mtx, axis=1), la.norm(dev_mtx, axis=1))
+    norm_center = np.apply_along_axis(np.linalg.norm, 1, center_mtx)
+    norm_dev = np.apply_along_axis(np.linalg.norm, 1, dev_mtx)
+    outer_prod = np.outer(norm_center, norm_dev)
     dot_prod = np.dot(dev_mtx, center_mtx.transpose())
     return dot_prod / outer_prod.T
 
